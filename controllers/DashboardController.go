@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"webvue/helpers"
+	"govue/helpers"
 
 	knot "github.com/eaciit/knot/knot.v1"
 	"github.com/eaciit/toolkit"

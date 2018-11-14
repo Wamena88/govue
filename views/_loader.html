@@ -1,0 +1,16 @@
+{{ define "_loader" }}
+<script src="{{BaseUrl}}static/node_modules/material-components-web/dist/material-components-web.min.js"></script>
+<script src="{{BaseUrl}}static/node_modules/jquery/dist/jquery.min.js"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<script src="{{BaseUrl}}static/node_modules/chart.js/dist/Chart.min.js"></script>
+<script src="{{BaseUrl}}static/node_modules/progressbar.js/dist/progressbar.min.js"></script>
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="{{BaseUrl}}static/js/material.js"></script>
+<script src="{{BaseUrl}}static/js/misc.js"></script>
+
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{{BaseUrl}}static/js/dashboard.js"></script>
+{{ end }}

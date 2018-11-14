@@ -1,17 +1,16 @@
 package main
 
 import (
+	"govue/controllers"
+	"govue/helpers"
 	"net/http"
 	"os"
-	"webvue/controllers"
-	"webvue/helpers"
 
 	"github.com/eaciit/knot/knot.v1"
 	tk "github.com/eaciit/toolkit"
 )
 
 var (
-	//appViewsPath = "/Users/ariefdarmawan/goapp/src/github.com/eaciit/knot/example/hello/views/"
 	appPath = func() string {
 		d, _ := os.Getwd()
 		return d
