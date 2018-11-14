@@ -1,0 +1,78 @@
+<script src="{{BaseUrl}}data/row.js"></script>
+
+<main class="content-wrapper">
+    <div class="mdc-layout-grid">
+        <div id="root" class="mdc-layout-grid__inner">
+            <!-- DATATABLE -->
+            <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12 col-xs-12 table-responsive">
+                <datatable :columns="columns" :data="rows">
+                    <template scope="{ row }">
+                        <tr>
+                            <td>
+                                <button class="btn btn-xs btn-primary" @click="expand(row.id)">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                            </td>
+                            <td>$[ row.id ]</td>
+                            <td>$[ row.user.username ]</td>
+                            <td>$[ row.user.first_name ]</td>
+                            <td>$[ row.user.last_name ]</td>
+                            <td>$[ row.user.email ]</td>
+                        </tr>
+                        <tr v-if="expanded == row.id">
+                            <td colspan="6">
+                                <p>
+                                    <img :src="'http://i.pravatar.cc/50?u=' + row.user.email" :alt="row.user.username" class="avatar">
+                                    $[ row.address ]<br>
+                                    $[ row.city ], $[ row.state ]
+                                </p>
+                            </td>
+                        </tr>
+                    </template>
+                </datatable>     
+            </div>
+            <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
+                <div class="mdc-layout-grid">
+                    <span class="text-muted">&nbsp;</span>
+                </div>
+                <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6 d-flex justify-content-end">
+                    <span class="mt-0 text-right">
+                        <datatable-pager v-model="page" type="abbreviated" :per-page="per_page"></datatable-pager>
+                    </span>
+                </div>
+            </div>
+            <!-- END DATATABLE -->
+        </div>
+    </div>
+</main>
+<script>
+new Vue({
+    el: '#root',
+	delimiters: ['$[', ']'],
+    data: {
+        columns: [
+            { label: '', field: '', align:'center', sortable: false },
+            { label: 'ID', field: 'id', align: 'center' },
+            { label: 'Username', field: 'user.username', align: 'center'  },
+            { label: 'First Name', field: 'user.first_name', align: 'center'  },
+            { label: 'Last Name', field: 'user.last_name', align: 'center'  },
+            { label: 'Email', field: 'user.email', align: 'center' , sortable: false },
+        ],
+        rows: window.rows,
+        page: 1,
+        per_page: 10,
+        expanded: null
+    },
+    methods: {
+        expand: function(id){
+            if (this.expanded == id){
+                this.expanded = null;
+
+                return;
+            }
+
+            this.expanded = id;
+        }
+    }
+});
+</script>

@@ -26,7 +26,9 @@ func main() {
 	app.ViewsPath = appPath + tk.PathSeparator + "views" + tk.PathSeparator
 	app.Static("static", appPath+tk.PathSeparator+"assets"+tk.PathSeparator)
 	app.Static("files", appPath+tk.PathSeparator+"uploads"+tk.PathSeparator)
+	app.Static("data", appPath+tk.PathSeparator+"data"+tk.PathSeparator)
 	app.Register(&controllers.DashboardController{Config: conf})
+	app.Register(&controllers.MasterUserController{Config: conf})
 	app.LayoutTemplate = "_template.html"
 	app.DefaultOutputType = knot.OutputTemplate
 	knot.RegisterApp(app)
