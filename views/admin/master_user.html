@@ -1,78 +1,114 @@
-<script src="{{BaseUrl}}data/row.js"></script>
+<!--script src="{{BaseUrl}}data/row.js"></script-->
 
 <main class="content-wrapper">
     <div class="mdc-layout-grid">
-        <div id="root" class="mdc-layout-grid__inner">
-            <!-- DATATABLE -->
-            <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12 col-xs-12 table-responsive">
-                <datatable :columns="columns" :data="rows">
-                    <template scope="{ row }">
-                        <tr>
-                            <td>
-                                <button class="btn btn-xs btn-primary" @click="expand(row.id)">
-                                    <span class="glyphicon glyphicon-search"></span>
-                                </button>
-                            </td>
-                            <td>$[ row.id ]</td>
-                            <td>$[ row.user.username ]</td>
-                            <td>$[ row.user.first_name ]</td>
-                            <td>$[ row.user.last_name ]</td>
-                            <td>$[ row.user.email ]</td>
-                        </tr>
-                        <tr v-if="expanded == row.id">
-                            <td colspan="6">
-                                <p>
-                                    <img :src="'http://i.pravatar.cc/50?u=' + row.user.email" :alt="row.user.username" class="avatar">
-                                    $[ row.address ]<br>
-                                    $[ row.city ], $[ row.state ]
-                                </p>
-                            </td>
-                        </tr>
-                    </template>
-                </datatable>     
-            </div>
-            <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-                <div class="mdc-layout-grid">
-                    <span class="text-muted">&nbsp;</span>
+        <div id="app">
+            <v-app id="yuhu">
+                <div>
+                    <v-data-table
+                        :headers="headers"
+                        :items="models"
+                        :pagination.sync="pagination"
+                        :total-items="total"
+                        :loading="loading"
+                        class="elevation-1"
+                    >
+                        <v-progress-linear slot="progress" color="blue" height="4" indeterminate></v-progress-linear>
+                        <template slot="items" slot-scope="props">
+                            <td>$[ props.item.name ]</td>
+                            <td>$[ props.item.username ]</td>
+                            <td>$[ props.item.password ]</td>
+                            <td>$[ props.item.email ]</td>
+                        </template>
+                    </v-data-table>
                 </div>
-                <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6 d-flex justify-content-end">
-                    <span class="mt-0 text-right">
-                        <datatable-pager v-model="page" type="abbreviated" :per-page="per_page"></datatable-pager>
-                    </span>
-                </div>
-            </div>
-            <!-- END DATATABLE -->
+            </v-app>
         </div>
     </div>
 </main>
 <script>
-new Vue({
-    el: '#root',
-	delimiters: ['$[', ']'],
-    data: {
-        columns: [
-            { label: '', field: '', align:'center', sortable: false },
-            { label: 'ID', field: 'id', align: 'center' },
-            { label: 'Username', field: 'user.username', align: 'center'  },
-            { label: 'First Name', field: 'user.first_name', align: 'center'  },
-            { label: 'Last Name', field: 'user.last_name', align: 'center'  },
-            { label: 'Email', field: 'user.email', align: 'center' , sortable: false },
-        ],
-        rows: window.rows,
-        page: 1,
-        per_page: 10,
-        expanded: null
-    },
-    methods: {
-        expand: function(id){
-            if (this.expanded == id){
-                this.expanded = null;
-
-                return;
-            }
-
-            this.expanded = id;
-        }
+var populateData = {{ .populate }} 
+console.log(populateData);
+var app = new Vue({
+  el: '#app',
+  delimiters: ['$[', ']'],
+  data () {
+    return {
+      total: 0,
+      models: [],
+      loading: true,
+      pagination: {
+          rowsPerPage:10,
+      },
+      headers: [
+        {text: 'Name',align: 'left',sortable: true,value: 'name'},
+        { text: 'Username',align: 'left', value: 'username' },
+        { text: 'Password',align: 'left', value: 'password' },
+        { text: 'Email',align: 'left', value: 'email' }
+      ]
     }
-});
+  },
+  watch: {
+    pagination: {
+      handler () {
+        this.getDataFromApi()
+          .then(data => {
+            this.models = data.items
+            this.total = data.total
+          })
+      },
+      deep: true
+    }
+  },
+  mounted () {
+    this.getDataFromApi()
+      .then(data => {
+        this.models = data.items
+        this.total = data.total
+      })
+  },
+  methods: {
+    getDataFromApi () {
+      this.loading = true
+      return new Promise((resolve, reject) => {
+        const { sortBy, descending, page, rowsPerPage } = this.pagination
+
+        let items = this.getPopulateData()
+        const total = items.length
+
+        if (this.pagination.sortBy) {
+          items = items.sort((a, b) => {
+            const sortA = a[sortBy]
+            const sortB = b[sortBy]
+
+            if (descending) {
+              if (sortA < sortB) return 1
+              if (sortA > sortB) return -1
+              return 0
+            } else {
+              if (sortA < sortB) return -1
+              if (sortA > sortB) return 1
+              return 0
+            }
+          })
+        }
+
+        if (rowsPerPage > 0) {
+          items = items.slice((page - 1) * rowsPerPage, page * rowsPerPage)
+        }
+
+        setTimeout(() => {
+          this.loading = false
+          resolve({
+            items,
+            total
+          })
+        }, 1000)
+      })
+    },
+    getPopulateData () {
+      return populateData
+    }
+  }
+})
 </script>

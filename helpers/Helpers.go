@@ -12,7 +12,7 @@ import (
 
 const (
 	LayoutYYYYMMDDTHHMMSSZ = "2006-01-02T15:04:05Z"
-	CollectExercise3       = "exercise3"
+	CollectionMasterUser   = "master_user"
 	Host                   = "localhost"
 	PortServer             = ":8081"
 	Database               = "webvue_db"
